@@ -41,3 +41,6 @@ def writeFile(file, data):
     if type == "json":
         with open(file, "w") as f:
             json.dump(data, f, indent=4)
+
+def brightness(color, multiplier):
+    return (clamp(color[0]*multiplier,0,255),clamp(color[1]*multiplier,0,255),clamp(color[2]*multiplier,0,255))

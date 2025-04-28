@@ -1,10 +1,9 @@
-import pygame
-from shaders import *
+import pygame, time
 from pygame.math import Vector2
 from locals import *
 
 class Box:
-    def __init__(self, pos, size, color, borderColor, dropShadow, borderRadius, borderWidth):
+    def __init__(self, pos, size, color, borderRadius, dropShadow=False, borderColor=False, borderWidth=False, center=False):
         self.pos = pos
         self.size = size
         self.color = color
@@ -12,26 +11,33 @@ class Box:
         self.dropShadow = dropShadow
         self.borderRadius = borderRadius
         self.borderWidth = borderWidth
+        self.center = center
         
     def Draw(self, surface):
         rect = self.rect()
         rect = pygame.Rect(rect.left+2,rect.top+2,rect.width,rect.height)
-        pygame.draw.rect(surface, brightness(self.borderColor,self.dropShadow), rect, border_radius=self.borderRadius)
+        if self.dropShadow != False:
+            pygame.draw.rect(surface, brightness(self.borderColor,self.dropShadow), rect, border_radius=self.borderRadius)
         pygame.draw.rect(surface, self.color, self.rect(), border_radius=self.borderRadius)
-        pygame.draw.rect(surface, self.borderColor, self.rect(), border_radius=self.borderRadius, width=self.borderWidth)
+        if self.borderColor != False:
+            pygame.draw.rect(surface, self.borderColor, self.rect(), border_radius=self.borderRadius, width=self.borderWidth)
 
     def rect(self):
-        return pygame.Rect(self.pos, self.size)
+        if self.center == False:
+            return pygame.Rect(self.pos, self.size)
+        elif self.center == True:
+            return pygame.Rect(self.pos.x-(self.size.x/2),self.pos.y-(self.size.y/2),self.size.x,self.size.y)
 
 class Font:
     def __init__(self, font, size):
         self.font = pygame.font.Font(font,size)
+        self.size = size
 
     def render(self, text, color):
-        return self.font.render(text, False, color)
+        return self.font.render(text, True, color)
 
     def Draw(self, surface, text, pos, color, center=False):
-        surf = self.font.render(text, False, color)
+        surf = self.font.render(text, True, color)
         if center:
             surface.blit(surf, Vector2(pos.x-(surf.get_width()/2),pos.y-(surf.get_height()/2)))
         elif not center:
@@ -143,3 +149,48 @@ class Slider:
             return round(roundIncrement(self.sliderPos, self.increment), len(str(self.increment).split(".")[1]))
         except:
             return roundIncrement(self.sliderPos, self.increment)
+        
+class TextBox:
+    def __init__(self, font, pos, size, textColor, backgroundColor, borderRadius):
+        self.font = font
+        self.pos = pos
+        self.size = size
+        self.text = ""
+        self.textColor = textColor
+        self.backgroundColor = backgroundColor
+        self.borderRadius = borderRadius
+        self.selected = False
+
+    def Draw(self, surface):
+        bounds = pygame.Surface((self.size.x,self.size.y))
+        bounds.set_colorkey((0,0,0))
+        pygame.draw.rect(bounds, self.backgroundColor, pygame.Rect(0,0,self.size.x,self.size.y), border_radius=self.borderRadius)
+        if self.selected:
+            if (int(time.time()*(1/.7))%2) == 0:
+                self.font.Draw(bounds, self.text+"|", Vector2(0,0), self.textColor)
+            else:
+                self.font.Draw(bounds, self.text, Vector2(0,0), self.textColor)
+        else:
+            self.font.Draw(bounds, self.text, Vector2(0,0), self.textColor)
+        surface.blit(bounds,self.pos)
+
+    def Update(self, events, mousePos):
+        for event in events:
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    if self.rect().collidepoint(mousePos):
+                        self.selected = True
+                    else:
+                        self.selected = False
+
+            if event.type == pygame.KEYDOWN and self.selected == True:
+                if event.key == pygame.K_ESCAPE:
+                    self.selected = False
+                if event.key == pygame.K_BACKSPACE:
+                    print("Backspace")
+                    self.text = self.text[:-1]
+                elif event.key != pygame.K_ESCAPE:
+                    self.text += event.unicode
+
+    def rect(self):
+        return pygame.Rect(self.pos.x, self.pos.y, self.size.x, self.size.y)
