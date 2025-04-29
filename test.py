@@ -10,6 +10,8 @@ clock = pygame.time.Clock()
 
 font = Font("FreeSansBold.ttf", 24)
 
+button = Button(Vector2(80,90),10,(150,150,150),("Hello",16,"FreeSansBold.ttf",(0,0,0)),print,runArgs=["Hello!"])
+
 while True:
     events = pygame.event.get()
     for event in events:
@@ -24,6 +26,10 @@ while True:
 
     font.Draw(screen, "Boxes", Vector2(0,60), (0,0,0))
     Box(Vector2(30,104),Vector2(60,40),(150,150,150),5,center=True).Draw(screen)
+
+    font.Draw(screen, "Buttons", Vector2(80,60), (0,0,0))
+    button.Draw(screen)
+    button.Update(events, pygame.mouse.get_pos())
 
     pygame.display.update()
     clock.tick(60)

@@ -44,17 +44,18 @@ class Font:
             surface.blit(surf, pos)
     
 class Button:
-    def __init__(self, pos, borderColor, dropShadow, borderRadius, borderSize, fillColor, icon, onClick, size="auto", runArgs=[]):
+    def __init__(self, pos, borderRadius, fillColor, icon, onClick, dropShadow=False, borderColor=False, borderSize=False, size="auto", runArgs=[], center=False):
         self.pos = pos
         self.borderColor = borderColor
         self.dropShadow = dropShadow
         self.borderRadius = borderRadius
         self.borderSize = borderSize
         self.fillColor = fillColor
+        self.center = center
         try:
             self.text = icon[0]
             self.font = Font(icon[2], icon[1])
-            self.icon = self.font.render(self.text, self.borderColor)
+            self.icon = self.font.render(self.text, icon[3])
         except:
             self.icon = pygame.image.load(icon).convert_alpha()
                 
@@ -74,16 +75,33 @@ class Button:
         rect = self.rect()
         rect = pygame.Rect(rect.left+2,rect.top+2,rect.width,rect.height)
 
-        if self.clicked  == True:
+        if self.clicked == True:
             pygame.draw.rect(surface, self.fillColor, rect, border_radius=self.borderRadius)
-            pygame.draw.rect(surface, self.borderColor, rect, width=self.borderSize, border_radius=self.borderRadius)
-            surface.blit(self.icon, self.pos-(Vector2(self.icon.get_size())/2)+Vector2(2,2))
+            if self.borderSize != False:
+                pygame.draw.rect(surface, self.borderColor, rect, width=self.borderSize, border_radius=self.borderRadius)
+            if self.dropShadow == True:
+                if self.center == True:
+                    surface.blit(self.icon, self.pos-(Vector2(self.icon.get_size())/2)+Vector2(2,2))
+                if self.center == False:
+                    surface.blit(self.icon, (self.pos+(self.size/2))-(Vector2(self.icon.get_size())/2)+Vector2(2,2))
+                    
+            if self.dropShadow == False:
+                if self.center == True:
+                    surface.blit(self.icon, self.pos-(Vector2(self.icon.get_size())/2))
+                if self.center == False:
+                    surface.blit(self.icon, (self.pos+(self.size/2))-(Vector2(self.icon.get_size())/2))
 
         if self.clicked == False:
-            pygame.draw.rect(surface, brightness(self.borderColor, self.dropShadow), rect, border_radius=self.borderRadius)
+            if self.dropShadow != False:
+                pygame.draw.rect(surface, brightness(self.borderColor, self.dropShadow), rect, border_radius=self.borderRadius)
             pygame.draw.rect(surface, self.fillColor, self.rect(), border_radius=self.borderRadius)
-            pygame.draw.rect(surface, self.borderColor, self.rect(), width=self.borderSize, border_radius=self.borderRadius)
-            surface.blit(self.icon, self.pos-(Vector2(self.icon.get_size())/2))
+            if self.borderSize != False:
+                pygame.draw.rect(surface, self.borderColor, self.rect(), width=self.borderSize, border_radius=self.borderRadius)
+            if self.center == True:
+                surface.blit(self.icon, self.pos-(Vector2(self.icon.get_size())/2))
+            if self.center == False:
+                surface.blit(self.icon, (self.pos+(self.size/2))-(Vector2(self.icon.get_size())/2))
+            
 
     def Update(self, events, mousePos):
         for event in events:
@@ -93,10 +111,15 @@ class Button:
                 #print("down")
             if event.type == pygame.MOUSEBUTTONUP and event.button == 1 and self.clicked == True:
                 self.onClick(*self.runArgs)
+                self.clicked = False
                 #print("up")
+            
 
     def rect(self):
-        return pygame.Rect(self.pos.x-(self.size.x/2), self.pos.y-(self.size.y/2), self.size.x, self.size.y)
+        if self.center == True:
+            return pygame.Rect(self.pos.x-(self.size.x/2), self.pos.y-(self.size.y/2), self.size.x, self.size.y)
+        if self.center == False:
+            return pygame.Rect(self.pos.x, self.pos.y, self.size.x, self.size.y)
     
 class Slider:
     def __init__(self, pos, sliderPos, displayWidth, range, lineColor, sliderColor, borderRadius, sliderBorderColor=False, increment=0.1):
