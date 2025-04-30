@@ -219,3 +219,6 @@ class TextBox:
 
     def rect(self):
         return pygame.Rect(self.pos.x, self.pos.y, self.size.x, self.size.y)
+    
+class Checkbox:
+    pass

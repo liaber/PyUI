@@ -14,6 +14,8 @@ button = Button(Vector2(80,90),(150,150,150),("Hello",16,"FreeSansBold.ttf",(0,0
 
 slider = Slider(Vector2(250,90),0,99,(0,100),(80,80,80),(180,180,180))
 
+textbox = TextBox(font,Vector2(150,150),Vector2(150,30),(0,0,0),(200,200,200),8)
+
 while True:
     events = pygame.event.get()
     for event in events:
@@ -36,6 +38,10 @@ while True:
     font.Draw(screen, f"Sliders: {slider.get()}", Vector2(200,60), (0,0,0))
     slider.Draw(screen)
     slider.Update(events, pygame.mouse.get_pos())
+
+    font.Draw(screen, "Textbox", Vector2(150,100), (0,0,0))
+    textbox.Draw(screen)
+    textbox.Update(events, pygame.mouse.get_pos())
 
     pygame.display.update()
     clock.tick(60)
