@@ -3,7 +3,7 @@ from pygame.math import Vector2
 from locals import *
 
 class Box:
-    def __init__(self, pos, size, color, borderRadius, dropShadow=False, borderColor=False, borderWidth=False, center=False):
+    def __init__(self, pos, size, color, borderRadius=0, dropShadow=False, borderColor=False, borderWidth=False, center=False):
         self.pos = pos
         self.size = size
         self.color = color
@@ -44,7 +44,7 @@ class Font:
             surface.blit(surf, pos)
     
 class Button:
-    def __init__(self, pos, borderRadius, fillColor, icon, onClick, dropShadow=False, borderColor=False, borderSize=False, size="auto", runArgs=[], center=False):
+    def __init__(self, pos, fillColor, icon, onClick, borderRadius=0, dropShadow=False, borderColor=False, borderSize=False, size="auto", runArgs=[], center=False):
         self.pos = pos
         self.borderColor = borderColor
         self.dropShadow = dropShadow
@@ -76,7 +76,10 @@ class Button:
         rect = pygame.Rect(rect.left+2,rect.top+2,rect.width,rect.height)
 
         if self.clicked == True:
-            pygame.draw.rect(surface, self.fillColor, rect, border_radius=self.borderRadius)
+            if self.dropShadow != False:
+                pygame.draw.rect(surface, self.fillColor, rect, border_radius=self.borderRadius)
+            else:
+                pygame.draw.rect(surface, self.fillColor, self.rect(), border_radius=self.borderRadius)
             if self.borderSize != False:
                 pygame.draw.rect(surface, self.borderColor, rect, width=self.borderSize, border_radius=self.borderRadius)
             if self.dropShadow == True:
@@ -102,7 +105,6 @@ class Button:
             if self.center == False:
                 surface.blit(self.icon, (self.pos+(self.size/2))-(Vector2(self.icon.get_size())/2))
             
-
     def Update(self, events, mousePos):
         for event in events:
             #print(event)
@@ -114,7 +116,6 @@ class Button:
                 self.clicked = False
                 #print("up")
             
-
     def rect(self):
         if self.center == True:
             return pygame.Rect(self.pos.x-(self.size.x/2), self.pos.y-(self.size.y/2), self.size.x, self.size.y)
@@ -122,7 +123,7 @@ class Button:
             return pygame.Rect(self.pos.x, self.pos.y, self.size.x, self.size.y)
     
 class Slider:
-    def __init__(self, pos, sliderPos, displayWidth, range, lineColor, sliderColor, borderRadius, sliderBorderColor=False, increment=0.1):
+    def __init__(self, pos, sliderPos, displayWidth, range, lineColor, sliderColor, borderRadius=0, sliderBorderColor=False, increment=0.1):
         self.pos = pos
         self.sliderPos = sliderPos
         self.displayWidth = displayWidth
@@ -152,7 +153,8 @@ class Slider:
         refRect = self.sliderRect()
         return pygame.Rect(refRect.left+self.pos.x-((self.displayWidth+4)/2),self.pos.y-4,4,8)
 
-    def Update(self, screen, mousePos, events):
+    def Update(self, events, mousePos):
+        mousePos = Vector2(mousePos)
         #pygame.draw.rect(screen, (255,0,0), self.rect())
         for event in events:
             if self.rect().collidepoint(mousePos) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
