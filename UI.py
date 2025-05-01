@@ -221,4 +221,33 @@ class TextBox:
         return pygame.Rect(self.pos.x, self.pos.y, self.size.x, self.size.y)
     
 class Checkbox:
-    pass
+    def __init__(self, pos, size, color, borderColor, checkColor, checked=False, borderRadius=0, borderWidth=3, center=False):
+        self.pos = pos
+        self.size = size
+        self.color = color
+        self.borderColor = borderColor
+        self.checkColor = checkColor
+        self.checked = checked
+        self.borderRadius = borderRadius
+        self.borderWidth = borderWidth
+        self.center = center
+    
+    def Draw(self, surface):
+        if self.checked == False:
+            pygame.draw.rect(surface, self.borderColor, self.rect(), width=self.borderWidth, border_radius=self.borderRadius)
+
+        if self.checked == True:
+            pygame.draw.rect(surface, self.color, self.rect(), border_radius=self.borderRadius)
+            pygame.draw.rect(surface, self.borderColor, self.rect(), width=self.borderWidth, border_radius=self.borderRadius)
+            pygame.draw.line(surface, self.checkColor, (self.rect().left,(self.rect().top+(self.rect().height/2))), (self.rect().left+(self.rect().width/2),self.rect().bottom),width=self.borderWidth)
+
+    def rect(self):
+        if self.center == True:
+            return pygame.Rect(self.pos.x-(self.size.x/2),self.pos.y-(self.size.y/2),self.size.x,self.size.y)
+        if self.center == False:
+            return pygame.Rect(self.pos.x, self.pos.y, self.size.x, self.size.y)
+
+    def Update(self, events, mousePos):
+        for event in events:
+            if self.rect().collidepoint(mousePos) and event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                self.checked = not self.checked

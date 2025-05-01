@@ -16,6 +16,8 @@ slider = Slider(Vector2(250,90),0,99,(0,100),(80,80,80),(180,180,180))
 
 textbox = TextBox(font,Vector2(150,150),Vector2(150,30),(0,0,0),(200,200,200),8)
 
+checkbox = Checkbox(Vector2(400,200),Vector2(30,30),(85,85,200),(200,200,200),(255,255,255),checked=True,borderRadius=10)
+
 while True:
     events = pygame.event.get()
     for event in events:
@@ -42,6 +44,9 @@ while True:
     font.Draw(screen, "Textbox", Vector2(150,100), (0,0,0))
     textbox.Draw(screen)
     textbox.Update(events, pygame.mouse.get_pos())
+
+    checkbox.Draw(screen)
+    checkbox.Update(events, pygame.mouse.get_pos())
 
     pygame.display.update()
     clock.tick(60)
