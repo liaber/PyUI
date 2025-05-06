@@ -239,7 +239,8 @@ class Checkbox:
         if self.checked == True:
             pygame.draw.rect(surface, self.color, self.rect(), border_radius=self.borderRadius)
             pygame.draw.rect(surface, self.borderColor, self.rect(), width=self.borderWidth, border_radius=self.borderRadius)
-            pygame.draw.line(surface, self.checkColor, (self.rect().left,(self.rect().top+(self.rect().height/2))), (self.rect().left+(self.rect().width/2),self.rect().bottom),width=self.borderWidth)
+            pygame.draw.line(surface, self.checkColor, (self.rect().left+(self.borderWidth*1.5),(self.rect().top+(2*(self.rect().height/3)))), (self.rect().left+(self.rect().width/3),self.rect().bottom-(self.borderWidth*1.5)),width=self.borderWidth)
+            pygame.draw.line(surface, self.checkColor, (self.rect().left+(self.rect().width/3),self.rect().bottom-(self.borderWidth*1.5)), (self.rect().right-(self.borderWidth*1.5),self.rect().top+(self.borderWidth*1.5)),width=self.borderWidth)
 
     def rect(self):
         if self.center == True:

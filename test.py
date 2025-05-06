@@ -45,6 +45,7 @@ while True:
     textbox.Draw(screen)
     textbox.Update(events, pygame.mouse.get_pos())
 
+    font.Draw(screen, str(checkbox.checked), Vector2(300,200), (0,0,0))
     checkbox.Draw(screen)
     checkbox.Update(events, pygame.mouse.get_pos())
 
